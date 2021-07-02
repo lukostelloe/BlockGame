@@ -21,13 +21,17 @@ canvas.height = 700;
 
 let livesleft = 3;
 
-//BALL SPEED
+function drawLives() {
+  ctx.font = "20px Comic Sans MS";
+  ctx.fillStyle = "black";
+  ctx.fillText(`${livesleft} lives left`, 580, 690);
+}
 
-var dx = 3;
-var dy = -3;
+//BALL SPEED
+var dx = 4;
+var dy = -4;
 
 //DEFINE ELEMENTS
-
 let paddle = {
   width: 100,
   height: 20,
@@ -84,6 +88,9 @@ function drawBall() {
     ball.posY = canvas.height - 200;
     dx = -dx;
     dy = -dy;
+    if (livesleft === 0) {
+      console.log("you lose");
+    }
   } else if (ball.posY < 20) {
     dy = -dy;
   } else if (
@@ -100,6 +107,7 @@ function refresh() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawRect();
   drawBall();
+  drawLives();
   brickA.drawBrick();
   window.requestAnimationFrame(refresh);
 }
@@ -121,5 +129,4 @@ document.onkeydown = function (e) {
       paddle.posX += 15;
     }
   }
-  console.log(paddle.posX);
 };
