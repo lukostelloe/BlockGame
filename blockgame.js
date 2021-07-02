@@ -1,3 +1,17 @@
+//MAKE MORE BRICKS
+
+//TOUCH A BRICK, IT BREAKS
+//if posX = posY etc
+// clearRect()
+//delete
+
+//SET LIVES
+//tu commence avec 3 lives
+//si tu perdu....... -1 life
+
+//SCORE
+//si tu casse une brick, cest +1
+
 const canvas = document.getElementById("canvas");
 
 const ctx = canvas.getContext("2d");
@@ -70,7 +84,7 @@ function drawBall() {
     ball.posY - 5 >= paddle.posY - 22 &&
     ball.posY + 5 <= paddle.posY + 20
   ) {
-    //console.log("hit");
+    console.log("hit");
     dy = -dy;
   }
 }
@@ -88,19 +102,19 @@ document.onkeydown = function (e) {
   e = e || window.event;
   var key = e.which || e.keyCode;
   if (key === 37) {
-    //console.log("left");
+    console.log("left");
     if (paddle.posX < 20) {
       paddle.posX = 0;
     } else {
       paddle.posX -= 15;
     }
   } else if (key === 39) {
-    //console.log("right");
+    console.log("right");
     if (paddle.posX > canvas.width - 160) {
       paddle.posX = canvas.width - paddle.width;
     } else {
       paddle.posX += 15;
     }
   }
-  // console.log(paddle.posX);
+  console.log(paddle.posX);
 };
