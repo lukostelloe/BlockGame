@@ -116,7 +116,6 @@ class Brick {
     ctx.closePath();
   }
 }
-<<<<<<< HEAD
 function levelOne(){
   for (let i = 40; i < canvas.width; i+= 120) {
     for (let j = 0; j < canvas.height / 3; j+= 20) {
@@ -125,12 +124,6 @@ function levelOne(){
     }
   }
 }
-=======
-
-let brickA = new Brick(50, 50, 20, 20);
-
-//DRAW RECTANGLE AND BALL
->>>>>>> 807012f0e5ea63e625417b32454b87c82dc8a052
 
 function drawRect() {
   ctx.beginPath();
@@ -139,9 +132,6 @@ function drawRect() {
   ctx.closePath();
 }
 
-<<<<<<< HEAD
-
-=======
 function drawBall() {
   ctx.beginPath();
   ctx.arc(ball.posX, ball.posY, 20, 0, 2 * Math.PI);
@@ -177,24 +167,20 @@ function drawBall() {
     dy = -dy;
   }
 }
->>>>>>> 807012f0e5ea63e625417b32454b87c82dc8a052
 
 function refresh() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawRect();
-<<<<<<< HEAD
   levelOne()
   ballA.drawBall();
   ballA.collisionPaddle();
   ballA.collisionBrick();
-=======
   drawBall();
   drawLives();
   brickA.drawBrick();
   if (loser == true) {
     startAgain();
   }
->>>>>>> 807012f0e5ea63e625417b32454b87c82dc8a052
   window.requestAnimationFrame(refresh);
 }
 window.requestAnimationFrame(refresh);
