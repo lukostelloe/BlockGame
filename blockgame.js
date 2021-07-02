@@ -41,6 +41,8 @@ class Ball{
     ctx.closePath();
     this.posX += dx;
     this.posY += dy;
+  }
+  collisionPaddle(){
     if (this.posX > canvas.width) {
       dx = -dx;
     } else if (this.posX < 20) {
@@ -60,8 +62,17 @@ class Ball{
       dy = -dy;
     }
   }
-  collision(){
-    //
+  collisionBrick(){
+    if (
+      (this.posX - 5 >= Brick.posX &&
+      this.posX + 5 <= Brick.posX + Brick.width) ||
+      (this.posY - 5 >= Brick.posY &&
+      this.posY + 5 <= Brick.posY + Brick.height)
+    ) {
+      console.log('hit');
+      dy = -dy;
+      dx = -dx;
+    }
   }
 }
 let ballA = new Ball(
@@ -84,7 +95,7 @@ class Brick {
   }
 }
 function levelOne(){
-  for (let i = 20; i < canvas.width; i+= 60) {
+  for (let i = 40; i < canvas.width; i+= 120) {
     for (let j = 0; j < canvas.height / 3; j+= 20) {
       const element = new Brick(i,j,20,20)
       element.drawBrick()
@@ -106,6 +117,8 @@ function refresh() {
   drawRect();
   levelOne()
   ballA.drawBall();
+  ballA.collisionPaddle();
+  ballA.collisionBrick();
   window.requestAnimationFrame(refresh);
 }
 window.requestAnimationFrame(refresh);
