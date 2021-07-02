@@ -13,15 +13,37 @@
 //si tu casse une brick, cest +1
 
 const canvas = document.getElementById("canvas");
-
 const ctx = canvas.getContext("2d");
-
 canvas.width = 700;
 canvas.height = 700;
 
-var dx = 3;
-var dy = -3;
+//LIVES VARIABLES
 
+let livesleft = 1;
+var loser = false;
+
+function drawLives() {
+  ctx.font = "20px Comic Sans MS";
+  ctx.fillStyle = "black";
+  ctx.fillText(`${livesleft} lives left`, 580, 690);
+}
+
+function startAgain() {
+  ctx.font = "20px Comic Sans MS";
+  ctx.fillStyle = "black";
+  ctx.textAlign = "center";
+  ctx.fillText(
+    `Game over! Refresh to play again`,
+    canvas.width / 2,
+    canvas.height / 2
+  );
+}
+
+//BALL SPEED
+var dx = 4;
+var dy = -4;
+
+//DEFINE ELEMENTS
 let paddle = {
   width: 100,
   height: 20,
@@ -94,6 +116,7 @@ class Brick {
     ctx.closePath();
   }
 }
+<<<<<<< HEAD
 function levelOne(){
   for (let i = 40; i < canvas.width; i+= 120) {
     for (let j = 0; j < canvas.height / 3; j+= 20) {
@@ -102,6 +125,12 @@ function levelOne(){
     }
   }
 }
+=======
+
+let brickA = new Brick(50, 50, 20, 20);
+
+//DRAW RECTANGLE AND BALL
+>>>>>>> 807012f0e5ea63e625417b32454b87c82dc8a052
 
 function drawRect() {
   ctx.beginPath();
@@ -110,15 +139,62 @@ function drawRect() {
   ctx.closePath();
 }
 
+<<<<<<< HEAD
 
+=======
+function drawBall() {
+  ctx.beginPath();
+  ctx.arc(ball.posX, ball.posY, 20, 0, 2 * Math.PI);
+  ctx.stroke();
+  ctx.closePath();
+  ball.posX += dx;
+  ball.posY += dy;
+  if (ball.posX > canvas.width) {
+    dx = -dx;
+  } else if (ball.posX < 20) {
+    dx = -dx;
+  } else if (ball.posY > canvas.height) {
+    livesleft--;
+    console.log(`You have ${livesleft} lives left`);
+    ball.posX = canvas.width / 2;
+    ball.posY = canvas.height - 200;
+    dx = -dx;
+    dy = -dy;
+    if (livesleft === 0) {
+      console.log("you lose, refresh to play again");
+      dx = 0;
+      dy = 0;
+      loser = true;
+    }
+  } else if (ball.posY < 20) {
+    dy = -dy;
+  } else if (
+    ball.posX - 5 >= paddle.posX &&
+    ball.posX + 5 <= paddle.posX + 100 &&
+    ball.posY - 5 >= paddle.posY - 22 &&
+    ball.posY + 5 <= paddle.posY + 20
+  ) {
+    dy = -dy;
+  }
+}
+>>>>>>> 807012f0e5ea63e625417b32454b87c82dc8a052
 
 function refresh() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawRect();
+<<<<<<< HEAD
   levelOne()
   ballA.drawBall();
   ballA.collisionPaddle();
   ballA.collisionBrick();
+=======
+  drawBall();
+  drawLives();
+  brickA.drawBrick();
+  if (loser == true) {
+    startAgain();
+  }
+>>>>>>> 807012f0e5ea63e625417b32454b87c82dc8a052
   window.requestAnimationFrame(refresh);
 }
 window.requestAnimationFrame(refresh);
