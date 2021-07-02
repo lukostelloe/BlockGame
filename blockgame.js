@@ -40,8 +40,8 @@ function startAgain() {
 }
 
 //BALL SPEED
-var dx = 4;
-var dy = -4;
+var dx = 3;
+var dy = -3;
 
 //DEFINE ELEMENTS
 let paddle = {
@@ -52,9 +52,11 @@ let paddle = {
 };
 
 class Ball{
-  constructor(posX,posY){
+  constructor(posX,posY,width , height){
     this.posX = posX;
     this.posY = posY;
+    this.width = width;
+    this.height = height;
   }
   drawBall() {
     ctx.beginPath();
@@ -97,19 +99,22 @@ class Ball{
   collisionBrick(){
     if (
       (this.posX - 5 >= Brick.posX &&
-      this.posX + 5 <= Brick.posX + Brick.width) ||
+      this.posX + 5 <= Brick.posX + Brick.width) &&
       (this.posY - 5 >= Brick.posY &&
       this.posY + 5 <= Brick.posY + Brick.height)
     ) {
       console.log('hit');
       dy = -dy;
       dx = -dx;
+      
     }
   }
 }
 let ballA = new Ball(
   canvas.width / 2,
-  canvas.height - 200
+  canvas.height - 200,
+  20,
+  20
 );
 
 class Brick {
@@ -126,26 +131,33 @@ class Brick {
     ctx.closePath();
   }
 }
+let arrayOfLevel =[];
 function levelOne(){
   for (let i = 40; i < canvas.width; i+= 120) {
-    for (let j = 0; j < canvas.height / 3; j+= 20) {
+    for (let j = 0; j < canvas.height / 3; j+= 40) {
       const element = new Brick(i,j,20,20)
+      arrayOfLevel.push(element)
       element.drawBrick()
     }
   }
 }
-
+function drawAllBrick(array) {
+  array.forEach(element => {
+    element.drawBrick();
+  });
+}
+levelOne()
+console.log(arrayOfLevel);
 function drawRect() {
   ctx.beginPath();
   ctx.rect(paddle.posX, paddle.posY, paddle.width, paddle.height);
   ctx.stroke();
   ctx.closePath();
 }
-
 function refresh() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawRect();
-  levelOne();
+  drawAllBrick(arrayOfLevel);
   ballA.drawBall();
   ballA.collisionPaddle();
   ballA.collisionBrick();
@@ -174,3 +186,4 @@ document.onkeydown = function (e) {
     }
   }
 };
+
