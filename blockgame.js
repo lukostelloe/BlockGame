@@ -19,12 +19,24 @@ canvas.height = 700;
 
 //LIVES VARIABLES
 
-let livesleft = 3;
+let livesleft = 1;
+var loser = false;
 
 function drawLives() {
   ctx.font = "20px Comic Sans MS";
   ctx.fillStyle = "black";
   ctx.fillText(`${livesleft} lives left`, 580, 690);
+}
+
+function startAgain() {
+  ctx.font = "20px Comic Sans MS";
+  ctx.fillStyle = "black";
+  ctx.textAlign = "center";
+  ctx.fillText(
+    `Game over! Refresh to play again`,
+    canvas.width / 2,
+    canvas.height / 2
+  );
 }
 
 //BALL SPEED
@@ -89,7 +101,10 @@ function drawBall() {
     dx = -dx;
     dy = -dy;
     if (livesleft === 0) {
-      console.log("you lose");
+      console.log("you lose, refresh to play again");
+      dx = 0;
+      dy = 0;
+      loser = true;
     }
   } else if (ball.posY < 20) {
     dy = -dy;
@@ -109,6 +124,9 @@ function refresh() {
   drawBall();
   drawLives();
   brickA.drawBrick();
+  if (loser == true) {
+    startAgain();
+  }
   window.requestAnimationFrame(refresh);
 }
 window.requestAnimationFrame(refresh);
