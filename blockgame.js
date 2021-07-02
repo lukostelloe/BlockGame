@@ -69,11 +69,21 @@ class Ball{
       dx = -dx;
     } else if (this.posX < 20) {
       dx = -dx;
-    } else if (this.posY > canvas.height) {
-      // console.log("you lose");
-      dx = 0;
-      dy = 0;
-    } else if (this.posY < 20) {
+    }  else if (this.posY > canvas.height) {
+      livesleft--;
+      console.log(`You have ${livesleft} lives left`);
+      this.posX = canvas.width / 2;
+      this.posY = canvas.height - 200;
+      dx = -dx;
+      dy = -dy;
+      if (livesleft === 0) {
+        console.log("you lose, refresh to play again");
+        dx = 0;
+        dy = 0;
+        loser = true;
+      }
+    } 
+    else if (this.posY < 20) {
       dy = -dy;
     } else if (
       this.posX - 5 >= paddle.posX &&
@@ -132,52 +142,14 @@ function drawRect() {
   ctx.closePath();
 }
 
-function drawBall() {
-  ctx.beginPath();
-  ctx.arc(ball.posX, ball.posY, 20, 0, 2 * Math.PI);
-  ctx.stroke();
-  ctx.closePath();
-  ball.posX += dx;
-  ball.posY += dy;
-  if (ball.posX > canvas.width) {
-    dx = -dx;
-  } else if (ball.posX < 20) {
-    dx = -dx;
-  } else if (ball.posY > canvas.height) {
-    livesleft--;
-    console.log(`You have ${livesleft} lives left`);
-    ball.posX = canvas.width / 2;
-    ball.posY = canvas.height - 200;
-    dx = -dx;
-    dy = -dy;
-    if (livesleft === 0) {
-      console.log("you lose, refresh to play again");
-      dx = 0;
-      dy = 0;
-      loser = true;
-    }
-  } else if (ball.posY < 20) {
-    dy = -dy;
-  } else if (
-    ball.posX - 5 >= paddle.posX &&
-    ball.posX + 5 <= paddle.posX + 100 &&
-    ball.posY - 5 >= paddle.posY - 22 &&
-    ball.posY + 5 <= paddle.posY + 20
-  ) {
-    dy = -dy;
-  }
-}
-
 function refresh() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawRect();
-  levelOne()
+  levelOne();
   ballA.drawBall();
   ballA.collisionPaddle();
   ballA.collisionBrick();
-  drawBall();
   drawLives();
-  brickA.drawBrick();
   if (loser == true) {
     startAgain();
   }
