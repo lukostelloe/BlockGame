@@ -66,7 +66,7 @@ class Ball{
     this.posX += dx;
     this.posY += dy;
   }
-  collisionPaddle(){
+  collisionBorder(){
     if (this.posX > canvas.width) {
       dx = -dx;
     } else if (this.posX < 20) {
@@ -87,7 +87,10 @@ class Ball{
     } 
     else if (this.posY < 20) {
       dy = -dy;
-    } else if (
+    }
+  }
+  collisionPaddle(){
+    if (
       this.posX - 5 >= paddle.posX &&
       this.posX + 5 <= paddle.posX + 100 &&
       this.posY - 5 >= paddle.posY - 22 &&
@@ -97,17 +100,19 @@ class Ball{
     }
   }
   collisionBrick(){
-    if (
-      (this.posX - 5 >= Brick.posX &&
-      this.posX + 5 <= Brick.posX + Brick.width) &&
-      (this.posY - 5 >= Brick.posY &&
-      this.posY + 5 <= Brick.posY + Brick.height)
-    ) {
-      console.log('hit');
-      dy = -dy;
-      dx = -dx;
-      
-    }
+    arrayOfLevel.forEach(element => {
+      element.drawBrick();
+      if (
+        (this.posX - 5 >= element.posX &&
+        this.posX + 5 <= element.posX + element.width) &&
+        (this.posY - 5 >= element.posY &&
+        this.posY + 5 <= element.posY + element.height)
+      ) {
+        console.log('hit');
+        dy = -dy;
+        dx = -dx;
+      };
+    });
   }
 }
 let ballA = new Ball(
@@ -137,14 +142,8 @@ function levelOne(){
     for (let j = 0; j < canvas.height / 3; j+= 40) {
       const element = new Brick(i,j,20,20)
       arrayOfLevel.push(element)
-      element.drawBrick()
     }
   }
-}
-function drawAllBrick(array) {
-  array.forEach(element => {
-    element.drawBrick();
-  });
 }
 levelOne()
 console.log(arrayOfLevel);
@@ -157,8 +156,8 @@ function drawRect() {
 function refresh() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawRect();
-  drawAllBrick(arrayOfLevel);
   ballA.drawBall();
+  ballA.collisionBorder()
   ballA.collisionPaddle();
   ballA.collisionBrick();
   drawLives();
