@@ -100,18 +100,19 @@ class Ball{
     }
   }
   collisionBrick(){
-    arrayOfLevel.forEach(element => {
-      element.drawBrick();
+    arrayOfLevel.forEach((element,index) => {
       if (
         (this.posX - 5 >= element.posX &&
         this.posX + 5 <= element.posX + element.width) &&
         (this.posY - 5 >= element.posY &&
         this.posY + 5 <= element.posY + element.height)
       ) {
-        console.log('hit');
+        console.log(index);
+        arrayOfLevel.splice(index,1)
         dy = -dy;
         dx = -dx;
       };
+      element.drawBrick();
     });
   }
 }
