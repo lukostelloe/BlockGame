@@ -29,14 +29,48 @@ let paddle = {
   posY: 650,
 };
 
-let ball = {
-  posX: canvas.width / 2,
-  posY: canvas.height - 200,
-};
+class Ball{
+  constructor(posX,posY){
+    this.posX = posX;
+    this.posY = posY;
+  }
+  drawBall() {
+    ctx.beginPath();
+    ctx.arc(this.posX, this.posY, 20, 0, 2 * Math.PI);
+    ctx.stroke();
+    ctx.closePath();
+    this.posX += dx;
+    this.posY += dy;
+    if (this.posX > canvas.width) {
+      dx = -dx;
+    } else if (this.posX < 20) {
+      dx = -dx;
+    } else if (this.posY > canvas.height) {
+      // console.log("you lose");
+      dx = 0;
+      dy = 0;
+    } else if (this.posY < 20) {
+      dy = -dy;
+    } else if (
+      this.posX - 5 >= paddle.posX &&
+      this.posX + 5 <= paddle.posX + 100 &&
+      this.posY - 5 >= paddle.posY - 22 &&
+      this.posY + 5 <= paddle.posY + 20
+    ) {
+      dy = -dy;
+    }
+  }
+  collision(){
+    //
+  }
+}
+let ballA = new Ball(
+  canvas.width / 2,
+  canvas.height - 200
+);
 
 class Brick {
   constructor(posX, posY, height, width) {
-    console.log("test");
     this.height = height;
     this.width = width;
     this.posX = posX;
@@ -49,10 +83,14 @@ class Brick {
     ctx.closePath();
   }
 }
-
-let brickA = new Brick(50, 50, 20, 20);
-
-console.log(brickA);
+function levelOne(){
+  for (let i = 20; i < canvas.width; i+= 60) {
+    for (let j = 0; j < canvas.height / 3; j+= 20) {
+      const element = new Brick(i,j,20,20)
+      element.drawBrick()
+    }
+  }
+}
 
 function drawRect() {
   ctx.beginPath();
@@ -61,39 +99,13 @@ function drawRect() {
   ctx.closePath();
 }
 
-function drawBall() {
-  ctx.beginPath();
-  ctx.arc(ball.posX, ball.posY, 20, 0, 2 * Math.PI);
-  ctx.stroke();
-  ctx.closePath();
-  ball.posX += dx;
-  ball.posY += dy;
-  if (ball.posX > canvas.width) {
-    dx = -dx;
-  } else if (ball.posX < 20) {
-    dx = -dx;
-  } else if (ball.posY > canvas.height) {
-    // console.log("you lose");
-    dx = 0;
-    dy = 0;
-  } else if (ball.posY < 20) {
-    dy = -dy;
-  } else if (
-    ball.posX - 5 >= paddle.posX &&
-    ball.posX + 5 <= paddle.posX + 100 &&
-    ball.posY - 5 >= paddle.posY - 22 &&
-    ball.posY + 5 <= paddle.posY + 20
-  ) {
-    console.log("hit");
-    dy = -dy;
-  }
-}
+
 
 function refresh() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawRect();
-  drawBall();
-  brickA.drawBrick();
+  levelOne()
+  ballA.drawBall();
   window.requestAnimationFrame(refresh);
 }
 window.requestAnimationFrame(refresh);
@@ -102,19 +114,16 @@ document.onkeydown = function (e) {
   e = e || window.event;
   var key = e.which || e.keyCode;
   if (key === 37) {
-    console.log("left");
     if (paddle.posX < 20) {
       paddle.posX = 0;
     } else {
-      paddle.posX -= 15;
+      paddle.posX -= 25;
     }
   } else if (key === 39) {
-    console.log("right");
     if (paddle.posX > canvas.width - 160) {
       paddle.posX = canvas.width - paddle.width;
     } else {
-      paddle.posX += 15;
+      paddle.posX += 25;
     }
   }
-  console.log(paddle.posX);
 };
