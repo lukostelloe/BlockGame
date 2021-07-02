@@ -13,14 +13,20 @@
 //si tu casse une brick, cest +1
 
 const canvas = document.getElementById("canvas");
-
 const ctx = canvas.getContext("2d");
-
 canvas.width = 700;
 canvas.height = 700;
 
+//LIVES VARIABLES
+
+let livesleft = 3;
+
+//BALL SPEED
+
 var dx = 3;
 var dy = -3;
+
+//DEFINE ELEMENTS
 
 let paddle = {
   width: 100,
@@ -36,7 +42,6 @@ let ball = {
 
 class Brick {
   constructor(posX, posY, height, width) {
-    console.log("test");
     this.height = height;
     this.width = width;
     this.posX = posX;
@@ -52,7 +57,7 @@ class Brick {
 
 let brickA = new Brick(50, 50, 20, 20);
 
-console.log(brickA);
+//DRAW RECTANGLE AND BALL
 
 function drawRect() {
   ctx.beginPath();
@@ -73,9 +78,12 @@ function drawBall() {
   } else if (ball.posX < 20) {
     dx = -dx;
   } else if (ball.posY > canvas.height) {
-    // console.log("you lose");
-    dx = 0;
-    dy = 0;
+    livesleft--;
+    console.log(`You have ${livesleft} lives left`);
+    ball.posX = canvas.width / 2;
+    ball.posY = canvas.height - 200;
+    dx = -dx;
+    dy = -dy;
   } else if (ball.posY < 20) {
     dy = -dy;
   } else if (
@@ -84,7 +92,6 @@ function drawBall() {
     ball.posY - 5 >= paddle.posY - 22 &&
     ball.posY + 5 <= paddle.posY + 20
   ) {
-    console.log("hit");
     dy = -dy;
   }
 }
@@ -102,14 +109,12 @@ document.onkeydown = function (e) {
   e = e || window.event;
   var key = e.which || e.keyCode;
   if (key === 37) {
-    console.log("left");
     if (paddle.posX < 20) {
       paddle.posX = 0;
     } else {
       paddle.posX -= 15;
     }
   } else if (key === 39) {
-    console.log("right");
     if (paddle.posX > canvas.width - 160) {
       paddle.posX = canvas.width - paddle.width;
     } else {
