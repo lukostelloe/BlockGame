@@ -1,17 +1,10 @@
-//MAKE MORE BRICKS
-
-//TOUCH A BRICK, IT BREAKS
-//if posX = posY etc
-// clearRect()
-//delete
-
-//SET LIVES
-//tu commence avec 3 lives
-//si tu perdu....... -1 life
-
+//MAKE MORE LEVEL BRICKS
+// transformé les différents niveau en tableau?
 //SCORE
-//si tu casse une brick, cest +1
-
+//crée un système pour le score (++ si brique break, multiplicateur tant quelle touche pas le paddle)
+//CONDITION COLLISION
+//vérifier de quel côté se produit la collision pour renvoyer la balle dans la bonne direction
+//Création du canvas (zone de jeu) et affectation d'une hauteur et d'une largeur
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 canvas.width = 700;
@@ -21,13 +14,13 @@ canvas.height = 700;
 
 let livesleft = 1;
 var loser = false;
-
+//Ecrit dans le canvas un indicateur (ATH) lié aux nombres de vie restante avant le game over
 function drawLives() {
   ctx.font = "20px Comic Sans MS";
   ctx.fillStyle = "black";
   ctx.fillText(`${livesleft} lives left`, 580, 690);
 }
-
+// Affichage d'un text (fonction à appeler en cas de gameOver)
 function startAgain() {
   ctx.font = "20px Comic Sans MS";
   ctx.fillStyle = "black";
@@ -49,29 +42,32 @@ let paddle = {
   height: 20,
   posX: 320,
   posY: 650,
+  margeWidth: 100 / 5,
+  margeHeight: 20 / 10,
 };
-
-class Ball{
-  constructor(posX,posY,width , height){
+//////////////////////////////////////////////////////////////////////
+//CONSTRUCTEUR DE BALL
+class Ball {
+  constructor(posX, posY, radius, height) {
     this.posX = posX;
     this.posY = posY;
-    this.width = width;
+    this.radius = radius;
     this.height = height;
   }
   drawBall() {
     ctx.beginPath();
-    ctx.arc(this.posX, this.posY, 20, 0, 2 * Math.PI);
+    ctx.arc(this.posX, this.posY, this.radius, 0, 2 * Math.PI);
     ctx.stroke();
     ctx.closePath();
     this.posX += dx;
     this.posY += dy;
   }
-  collisionBorder(){
+  collisionBorder() {
     if (this.posX > canvas.width) {
       dx = -dx;
-    } else if (this.posX < 20) {
+    } else if (this.posX < this.radius) {
       dx = -dx;
-    }  else if (this.posY > canvas.height) {
+    } else if (this.posY > canvas.height) {
       livesleft--;
       console.log(`You have ${livesleft} lives left`);
       this.posX = canvas.width / 2;
@@ -84,45 +80,60 @@ class Ball{
         dy = 0;
         loser = true;
       }
-    } 
-    else if (this.posY < 20) {
+    } else if (this.posY < this.radius) {
       dy = -dy;
     }
   }
-  collisionPaddle(){
+  collisionPaddle() {
     if (
-      this.posX - 5 >= paddle.posX &&
-      this.posX + 5 <= paddle.posX + 100 &&
-      this.posY - 5 >= paddle.posY - 22 &&
-      this.posY + 5 <= paddle.posY + 20
+      this.posX - this.radius >= paddle.posX - paddle.margeWidth &&
+      this.posX + this.radius <= paddle.posX + paddle.width &&
+      this.posY - this.radius >=
+        paddle.posY - paddle.height + paddle.margeHeight &&
+      this.posY + this.radius <= paddle.posY + paddle.height
     ) {
       dy = -dy;
+    } else if (
+      this.posX - this.radius >= paddle.posX - paddle.margeWidth * 1.5 &&
+      this.posX + this.radius <=
+        paddle.posX + paddle.width + paddle.margeWidth &&
+      this.posY - this.radius >=
+        paddle.posY - paddle.height + paddle.margeHeight &&
+      this.posY + this.radius <=
+        paddle.posY + paddle.height + paddle.margeHeight * 1.5
+    ) {
+      dy = -dy;
+      dx = -dx;
     }
   }
-  collisionBrick(){
-    arrayOfLevel.forEach((element,index) => {
+  collisionBrick() {
+    arrayOfLevel.forEach((element, index) => {
       if (
-        (this.posX - 5 >= element.posX &&
-        this.posX + 5 <= element.posX + element.width) &&
-        (this.posY - 5 >= element.posY &&
-        this.posY + 5 <= element.posY + element.height)
+        this.posX - this.radius >= element.posX - element.width &&
+        this.posX + this.radius <= element.posX + element.width * 2 &&
+        this.posY - this.radius >= element.posY - element.height * 2 &&
+        this.posY + this.radius <= element.posY + element.height * 2
       ) {
         console.log(index);
-        arrayOfLevel.splice(index,1)
+        console.log("okkkk");
+        arrayOfLevel.splice(index, 1);
         dy = -dy;
         dx = -dx;
-      };
+      }
       element.drawBrick();
     });
   }
+  upDate() {
+    this.collisionBorder();
+    this.collisionPaddle();
+    this.collisionBrick();
+    this.drawBall();
+  }
 }
-let ballA = new Ball(
-  canvas.width / 2,
-  canvas.height - 200,
-  20,
-  20
-);
-
+let ballA = new Ball(canvas.width / 2, canvas.height - 200, 10, 20);
+console.log("ici", paddle.margeWidth);
+//////////////////////////////////////////////////////////////////////
+//CONSTRUCTEUR DE BRIQUES
 class Brick {
   constructor(posX, posY, height, width) {
     this.height = height;
@@ -137,30 +148,31 @@ class Brick {
     ctx.closePath();
   }
 }
-let arrayOfLevel =[];
-function levelOne(){
-  for (let i = 40; i < canvas.width; i+= 120) {
-    for (let j = 0; j < canvas.height / 3; j+= 40) {
-      const element = new Brick(i,j,20,20)
-      arrayOfLevel.push(element)
+// TABLEAU QUI REPRESENTE LE LEVEL (BRIQUES) A DESSINER
+let arrayOfLevel = [];
+//LEVEL1 => crée X nombres de briques et postionnement
+function levelOne() {
+  for (let i = 40; i < canvas.width; i += 120) {
+    for (let j = 0; j < canvas.height / 3; j += 40) {
+      const element = new Brick(i, j, 20, 20);
+      arrayOfLevel.push(element);
     }
   }
 }
-levelOne()
-console.log(arrayOfLevel);
-function drawRect() {
+levelOne();
+// console.log(arrayOfLevel);
+
+function drawPaddle() {
   ctx.beginPath();
   ctx.rect(paddle.posX, paddle.posY, paddle.width, paddle.height);
   ctx.stroke();
   ctx.closePath();
 }
+//function PRINCIPALE qui s'auto effectue toutes les 16ms
 function refresh() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawRect();
-  ballA.drawBall();
-  ballA.collisionBorder()
-  ballA.collisionPaddle();
-  ballA.collisionBrick();
+  drawPaddle();
+  ballA.upDate();
   drawLives();
   if (loser == true) {
     startAgain();
@@ -168,22 +180,18 @@ function refresh() {
   window.requestAnimationFrame(refresh);
 }
 window.requestAnimationFrame(refresh);
-
-document.onkeydown = function (e) {
-  e = e || window.event;
-  var key = e.which || e.keyCode;
-  if (key === 37) {
+document.addEventListener("keydown", function (e) {
+  if (e.code == "ArrowLeft") {
     if (paddle.posX < 20) {
       paddle.posX = 0;
     } else {
       paddle.posX -= 25;
     }
-  } else if (key === 39) {
+  } else if (e.code == "ArrowRight") {
     if (paddle.posX > canvas.width - 160) {
       paddle.posX = canvas.width - paddle.width;
     } else {
       paddle.posX += 25;
     }
   }
-};
-
+});
